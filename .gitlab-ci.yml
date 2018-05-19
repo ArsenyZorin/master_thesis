@@ -1,5 +1,7 @@
-stage: build
-script: make
-artifacts: 
-    name: thesis
+stages:
+    - build
+
+thesis:
+    stage: build
+    script: make pdf
 
