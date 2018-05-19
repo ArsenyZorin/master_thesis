@@ -4,4 +4,4 @@ compile_pdf:
         - make pdf
     artifacts:
         paths:
-            - thesis.pdf
+            - master_thesis.pdf
