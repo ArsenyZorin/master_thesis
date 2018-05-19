@@ -1,7 +1,7 @@
-stages:
-    - build
-
-thesis:
-    stage: build
-    script: make pdf
-
+compile_pdf:
+    image: aergus/latex
+    script:
+        - make pdf
+    artifact:
+        paths:
+            - thesis.pdf
