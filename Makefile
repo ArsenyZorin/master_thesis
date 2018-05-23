@@ -10,6 +10,7 @@ TARGETFILES?=	preamble.tex \
 				chapter01.tex \
 				chapter02.tex \
 				chapter03.tex \
+				chapter04.tex \
 				conclusion.tex \
 				appendix01.tex
 
