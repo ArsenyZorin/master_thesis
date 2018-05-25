@@ -1,3 +1,84 @@
 \chapter{Тестирование и анализ результатов}
 
-В данном разделе проводится исследование характеристик прототипа на примере его использования для обнаружения клонов ... 
+В данном разделе проводится исследование характеристик прототипа на примере его использования для обнаружения клонов. Тестирование проводилось на нескольких различных выборках из BigCloneBench.
+
+\section{Тестирование прототипа обнаружения клонов}
+
+\subsection{Описание тестовых данных}
+
+\subsection{Описание тестовой платформы и конфигурации прототипа}
+
+Все эксперименты в рамках данного тестирования были проведены на двух различных машинах со следующими конфигурациями:
+
+\begin{enumerate}
+\setlength\itemsep{0mm}
+\item ПК
+\begin{itemize}
+\setlength\itemsep{0mm}
+\item ОС ArchLinux;
+\item CPU Intel(R) Core(TM) i7-7700K CPU 4.20ГГц;
+\item 64 Гб RAM;
+\item NVidia Quadro P4000 8Гб;
+\end{itemize}
+\item DGX-1
+\begin{itemize}
+\setlength\itemsep{0mm}
+\item ОС Ubuntu 16.04 LTS
+\item Intel(R) Xeon(R) CPU E5-2698 v4 2.20 ГГц x2;
+\item 512 ГГб RAM
+\item NVidia Tesla V100 16Гб x8.
+\end{itemize}
+\end{enumerate}
+
+\subsection{Исследование показателей прототипа}
+
+Главной задачей данной работы является разработка метода интеллектуального обнаружения клонов. Основными требованиями, предъявляемыми к такому методу, являются увеличение точности поиска и определение клонов первых трех типов. Данные характеристики исследуются на примере использования разработанного прототипа для обнаружения клонов. Результат анализа прототипа представлен в таблице \ref{testing}, где:
+
+\begin{itemize}
+\setlength\itemsep{0mm}
+\item \(KLOC\) - количество строк исходного кода (в тысячах);
+\item \(N_{methods}\) - количество исследуемых методов;
+\item \(N_{clones}\) - количество найденных клонов;
+\item \(Rec\) - полнота результата;
+\item \(Prec\) - точность результата;
+\item \(t_w\) - время расчета (без учета преобразований и обучения).
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\captionsetup{skip=5pt}
+\caption{My caption}
+\label{testing}
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+\(N_{methods}\) & KLOC  & \(N_{clones}\) & Rec  & Prec & \(t_w\)     \\ \hline
+4178     & 286.5 & 1834      & 0.93 & 0.97 & 02:17 мин \\ \hline
+         &       &           &      &      &       \\ \hline
+         &       &           &      &      &       \\ \hline
+\end{tabular}
+\end{table}
+
+Все анализируемые метрики весьма тривиальные, за исключением \(Recall\) и \(Precision\). Для их пояснения необходимо ввести некоторые понятия, а именно - \(True\ positives\ (TP)\), \(True\ negatives\ (TN)\),\(False\ positives\ (FP)\), \(False\ negatives\ (FN)\), где:
+
+\begin{itemize}
+\setlength\itemsep{0mm}
+\item \(True\ positives\) - 
+\item \(True\ negatives\) - 
+\item \(False\ positives\) - ложно-положительные результаты;
+\item \(False\ negatives\) - ложно-отрицательные результаты.
+\end{itemize}
+
+Такие метрики рассчитываются согласно табл. \ref{truepos}.
+
+\begin{table}[H]
+\centering
+\captionsetup{skip=5pt}
+\caption{My caption}
+\label{truepos}
+\begin{tabular}{c|c|c|}
+\cline{2-3}
+                                   & Клон & Не клон \\ \hline
+\multicolumn{1}{|c|}{Клон (CD)}    & TP   & FP      \\ \hline
+\multicolumn{1}{|c|}{Не клон (CD)} & FN   & TN      \\ \hline
+\end{tabular}
+\end{table}
