@@ -92,22 +92,22 @@
 \end{tabular}
 \end{table}
 
-Все анализируемые метрики весьма тривиальные, за исключением \(Recall\) и \(Precision\). Для их пояснения необходимо ввести некоторые понятия, а именно - \(True\ positives\ (TP)\), \(True\ negatives\ (TN)\),\(False\ positives\ (FP)\), \(False\ negatives\ (FN)\), где:
+Все анализируемые метрики весьма тривиальные, за исключением \(Recall\), \(Precision\) и \(F_1\). Для их пояснения необходимо ввести некоторые понятия, а именно - \(True\ positives\ (TP)\), \(True\ negatives\ (TN)\), \(False\ positives\ (FP)\), \(False\ negatives\ (FN)\), где:
 
 \begin{itemize}
 \setlength\itemsep{0mm}
-\item \(True\ positives\) - 
-\item \(True\ negatives\) - 
+\item \(True\ positives\) - истинно-положительный результат;
+\item \(True\ negatives\) -  истинно-отрицательный результат;
 \item \(False\ positives\) - ложно-положительные результаты;
 \item \(False\ negatives\) - ложно-отрицательные результаты.
 \end{itemize}
 
-Такие метрики рассчитываются согласно табл. \ref{truepos}.
+Такие метрики рассчитываются согласно табл. \ref{truepos}, где CD - ответ выданный прототипом (Clone Detector).
 
 \begin{table}[H]
 \centering
 \captionsetup{skip=5pt}
-\caption{My caption}
+\caption{Вспомогательные метрики}
 \label{truepos}
 \begin{tabular}{c|c|c|}
 \cline{2-3}
@@ -116,3 +116,21 @@
 \multicolumn{1}{|c|}{Не клон (CD)} & FN   & TN      \\ \hline
 \end{tabular}
 \end{table}
+
+Итак, после введения дополнительных метрик, рассчет \(Precision\), \(Recall\) и \(F_1\) будет намного нагляднее. Для расчета основных метрик оценки работы нейронных сетей используются следующие формулы:
+
+\begin{equation}
+\label{eq:recall}
+Recall = \frac{True\ positives}{True\ positives + False\ negatives}
+\end{equation}
+
+\begin{equation}
+\label{eq:precision}
+Precision = \frac{True\ positives}{True\ positives + False\ positives}
+\end{equation}
+
+\begin{equation}
+\label{eq:f1}
+F_1 = 2*\frac{Precision * Recall}{Precision + Recall}
+\end{equation}
+
