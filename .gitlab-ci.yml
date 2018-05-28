@@ -6,8 +6,7 @@ image: blang/latex
 
 build:
   script:
-    - make clean
-    - make pdf
+    - make clean pdf
   artifacts:
     paths:
       - "*.pdf"
