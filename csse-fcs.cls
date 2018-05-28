@@ -315,7 +315,7 @@
 }
 \newcommand\makeabstract{%
   \makeabstractru%
-
+  \vskip 2em
   \makeabstracten%
 }
 
