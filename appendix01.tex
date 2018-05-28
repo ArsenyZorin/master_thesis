@@ -1,6 +1,13 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\nchapter{ПРИЛОЖЕНИЕ. ЛИСТИНГИ}
+\chapter*{ЛИСТИНГИ}
+\addcontentsline{toc}{chapter}{ПРИЛОЖЕНИЕ. ЛИСТИНГИ}%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{flushright}
+\vskip-12ex
+Приложение
+\end{flushright}
+\vskip2ex
 
 \lstinputlisting[
 label={lst:psigen},
@@ -33,13 +40,13 @@ style=java,
 \lstinputlisting[
 label={lst:model},
 caption={Файл model.py},
-language=Python,
+style=python,
 ]
 {src/model.py}
 
 \lstinputlisting[
 label={lst:recogn},
 caption={Файл clonesRecognition.py},
-language=Python,
+style=python,
 ]
 {src/clonesRecognition.py}
