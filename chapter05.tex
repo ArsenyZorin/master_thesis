@@ -8,13 +8,155 @@
 
 \begin{itemize}
 \setlength\itemsep{0mm}
-\item приблизительно 4000 методов
-\item приблизительно 4000 методов
+\item приблизительно 4000 методов 
+\item приблизительно 8000 методов
 \item приблизительно 10000 методов
 \item приблизительно 20000 методов
 \end{itemize}
 
-Выбранные фрагменты набора можно считать как программами среднего, так и программами большого размера. Так как в выборке BigCloneBench присутствуют различные файлы, классы и методы из различных проектов, то случайно выбранные методы, вероятнее всего, друг с другом никак не связаны.
+Выбранные фрагменты набора можно считать импровизированными <<проектами>> среднего, так и программами большого размера. Так как в выборке BigCloneBench присутствуют различные файлы, классы и методы из различных проектов, то случайно выбранные методы, вероятнее всего, друг с другом никак не связаны.
+
+Как было описано ранее, в выборке данных BigCloneBench содержатся клоны всех типов (I-IV). BigCloneBench представляет из себя экспортированную базу данных формата PostgresSQL, состоящую из нескольких таблиц. Клоны и методы, которые не являются клонами в ней представлены как записи пар индексов всех методов с дополнительными параметрами. Примеры клонов трех типов представлены на рис.~\ref{fig:first}-\ref{fig:third}.
+
+Преимуществом выборки BigCloneBench является ее заполнение с помощью ручного поиска клонов. Для этого был использован большой межпроектный репозиторий IJaDataset 2.0 (25 тыс. подсистем, 365 MLOC). Текущая версия данной выборки содержит в себе приблизительно 6.3 млн пар клонов и 262.5 тыс. не клонов~\cite{bcb}.
+
+\begin{figure}[H]
+\begin{subfigure}{\textwidth}
+\begin{lstlisting}[style=java]
+public static void copyFile(File src, File dst) throws IOException {
+    InputStream in = new FileInputStream(src);
+    OutputStream out = new FileOutputStream(dst);
+    byte[] buf = new byte[1024];
+    int len;
+    while ((len = in.read(buf)) > 0) out.write(buf, 0, len);
+    in.close();
+    out.close();
+}
+\end{lstlisting}
+\caption{Метод из файла selected/77754.java}
+\end{subfigure}
+\begin{subfigure}{\textwidth}
+\begin{lstlisting}[style=java]
+public static void copyFile(File src, File dst) throws IOException {
+    InputStream in = new FileInputStream(src);
+    OutputStream out = new FileOutputStream(dst);
+    byte[] buf = new byte[1024];
+    int len;
+    while ((len = in.read(buf)) > 0) out.write(buf, 0, len);
+    in.close();
+    out.close();
+}
+\end{lstlisting}
+\caption{Метод из файла selected/2077739.java}
+\end{subfigure}
+\caption{Пример клона I типа из BigCloneBench}
+\label{fig:first}
+\end{figure}
+
+\begin{figure}[H]
+\begin{subfigure}{\textwidth}
+\begin{lstlisting}[style=java]
+public static void copyFile(File source, File dest) throws IOException {
+    FileChannel in = null, out = null;
+    try {
+        in = new FileInputStream(source).getChannel();
+        out = new FileOutputStream(dest).getChannel();
+        long size = in.size();
+        MappedByteBuffer buf = in.map(FileChannel.MapMode.READ_ONLY, 0, size);
+        out.write(buf);
+    } finally {
+        if (in != null) in.close();
+        if (out != null) out.close();
+    }
+}
+\end{lstlisting}
+\caption{Метод из файла selected/166275.java}
+\end{subfigure}
+\end{figure}
+\begin{figure}[H]\ContinuedFloat
+\begin{subfigure}{\textwidth}
+\begin{lstlisting}[style=java]
+public static void fileCopy(File source, File dest) throws IOException {
+    FileChannel in = null, out = null;
+    try {
+        in = new FileInputStream(source).getChannel();
+        out = new FileOutputStream(dest).getChannel();
+        long size = in.size();
+        MappedByteBuffer buf = in.map(FileChannel.MapMode.READ_ONLY, 0, size);
+        out.write(buf);
+    } finally {
+        if (in != null) in.close();
+        if (out != null) out.close();
+    }
+}
+\end{lstlisting}
+\caption{Метод из файла selected/2558574.java}
+\end{subfigure}
+\caption{Пример клона II типа из BigCloneBench}
+\label{fig:second}
+\end{figure}
+
+Задача предлагаемого метода заключается в нахождении клонов первых трех типов (I-III). Основываясь на этой задаче, необходимо произвести фильтрацию значений из базы данных. 
+
+\begin{figure}[H]
+\begin{subfigure}{\textwidth}
+\begin{lstlisting}[style=java]
+public void downloadFile(OutputStream os, int fileId) throws IOException, SQLException {
+    Connection conn = null;
+    try {
+        conn = ds.getConnection();
+        Guard.checkConnectionNotNull(conn);
+        PreparedStatement ps = conn.prepareStatement("select * from FILE_BODIES where file_id=?");
+        ps.setInt(1, fileId);
+        ResultSet rs = ps.executeQuery();
+        if (!rs.next()) {
+            throw new FileNotFoundException("File with id=" + fileId + " not found!");
+        }
+        Blob blob = rs.getBlob("data");
+        InputStream is = blob.getBinaryStream();
+        IOUtils.copyLarge(is, os);
+    } finally {
+        JdbcDaoHelper.safeClose(conn, log);
+    }
+}
+\end{lstlisting}
+\caption{Метод из файла selected/180566.java}
+\end{subfigure}
+\end{figure}
+\begin{figure}[H]\ContinuedFloat
+\begin{subfigure}{\textwidth}
+\begin{lstlisting}[style=java]
+public void handleMessage(Message message) throws Fault {
+    InputStream is = message.getContent(InputStream.class);
+    if (is == null) {
+        return;
+    }
+    CachedOutputStream bos = new CachedOutputStream();
+    try {
+        IOUtils.copy(is, bos);
+        is.close();
+        bos.close();
+        sendMsg("Inbound Message \n" + "--------------" + bos.getOut().toString() + "\n--------------");
+        message.setContent(InputStream.class, bos.getInputStream());
+    } catch (IOException e) {
+        throw new Fault(e);
+    }
+}
+\end{lstlisting}
+\caption{Метод из файла selected/1607050.java }
+\end{subfigure}
+\caption{Пример клона III типа из BigCloneBench}
+\label{fig:third}
+\end{figure}
+
+Фильтрация данных была сделана по значению в столбце \texttt{syntactic\_type}. Выбирались только те значения, которые не превышали 3. Однако, не было учтено одинаковое значение в данном столбце у клонов III и IV типов. Вызвано это сложностью разделения клонов III и IV типов в выборке BigCloneBench. Клоны данных типов разделяются на основе их значений синтаксического сходства. Таким образом, выделяются три диапазона значения:
+
+\begin{itemize}
+\setlength\itemsep{0mm}
+\item \([0.0, 0.5)\) - преимущественно клоны IV типа;
+\item \([0.5, 0.7)\) - преимущественно клоны III типа;
+\item \([0.7, 1.0)\) - строго III тип клонов.
+\end{itemize}
 
 \section{Описание тестовой платформы и конфигурации прототипа}
 
@@ -58,7 +200,7 @@
 
 \section{Исследование показателей прототипа}
 
-Главной задачей данной работы является разработка метода интеллектуального обнаружения клонов. Основными требованиями, предъявляемыми к такому методу, являются увеличение точности поиска и определение клонов первых трех типов. Данные характеристики исследуются на примере использования разработанного прототипа для обнаружения клонов. Результат анализа прототипа представлен в таблице \ref{testing}, где:
+Главной задачей данной работы является разработка метода интеллектуального обнаружения клонов. Основными требованиями, предъявляемыми к такому методу, являются увеличение точности поиска и определение клонов первых трех типов. Данные характеристики исследуются на примере использования разработанного прототипа для обнаружения клонов. Тестирование производится на сетях, обученных на двух разных выборках. В первом случае, Сиамская сеть была обучена на небольшой выборке из BigCloneBench. В качестве обучающей выборки использовался набор из 40000 пар: 30000 из них - клоны, остальные 10000 - нет. Результат анализа прототипа представлен в таблицах ниже (табл.~\ref{testing}~-~\ref{mutator}), где:
 
 \begin{itemize}
 \setlength\itemsep{0mm}
@@ -74,7 +216,7 @@
 \begin{table}[H]
 \centering
 \captionsetup{skip=5pt}
-\caption{Результаты тестирования}
+\caption{Результаты тестирования BigCloneBench}
 \label{testing}
 \begin{tabular}{|c|c|c|c|c|c|c|c|}
 \hline
@@ -89,6 +231,29 @@
 8321     		& 754  	   & 5325    		& 0.89 	   & 0.97 	  & 0.93 	& 04:34 мин 	   \\ \hline
 10523    		& 3152 	   & 26395   		& 0.88 	   & 0.94 	  & 0.91 	& 07:55 мин 	   \\ \hline
 18753    		& 2965 	   & 35486   		& 0.90 	   & 0.79 	  & 0.84 	& 11:32 мин 	   \\ \hline
+\end{tabular}
+\end{table}
+
+Во втором случае обучение Сиамской сети производилось на результате работы <<мутатора>>. На вход разработанному <<мутатору>> подавался проект IntelliJ IDEA Community. Объем Java кода данного проекта - 3545 KLOC и содержит он в себе порядка 338 тыс. методов. Однако, так как обучение на одних клонах не является корректным, то необходимы были контрпримеры. В качестве контрпримера было решено взять другой проект - Incubator Netbeans. Объем Java кода - 3650 KLOC. Количество методов в данном проекте не превышает 283 тыс.
+
+\begin{table}[H]
+\centering
+\captionsetup{skip=5pt}
+\caption{Результаты тестирования <<мутатора>>}
+\label{mutator}
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+\(N_{methods}\) & \(KLOC\) & \(N_{clones}\) & \(Rec\)  & \(Prec\) & \(F_1\) & \(t_f\)        \\ \hline
+\multicolumn{7}{|c|}{ПК}                                       \\ \hline
+3951       & 195  & 1348      & 0.73 & 0.76 & 0.74 & 06:31 мин \\ \hline
+7954       & 679  & 4731      & 0.77 & 0.73 & 0.75 & 09:28 мин \\ \hline
+12573      & 2803 & 24385     & 0.75 & 0.73 & 0.74 & 14:44 мин \\ \hline
+20842      & 2947 & 32679     & 0.74 & 0.75 & 0.75 & 17:37 мин \\ \hline
+\multicolumn{7}{|c|}{DGX}                                      \\ \hline
+4334       & 206  & 1028      & 0.75 & 0.74 & 0.75 & 04:15 мин \\ \hline
+8016       & 721  & 5267      & 0.72 & 0.76 & 0.74 & 06:22 мин \\ \hline
+11845      & 1573 & 16612     & 0.73 & 0.77 & 0.75 & 12:47 мин \\ \hline
+18539      & 3182 & 29761     & 0.76 & 0.78 & 0.74 & 15:14 мин \\ \hline
 \end{tabular}
 \end{table}
 
@@ -147,8 +312,22 @@ F_1 = 2*\frac{Precision * Recall}{Precision + Recall}
 
 Затрачиваемое время на анализ напрямую зависит от объема методов в анализируемой выборке. Связано это с последовательной обработкой методов и отсутствии вычислительной оптимизации.
 
-«Проседание» точности вычисления при увеличении анализируемых данных допустимо, т.к. оно не является критичным.
+<<Проседание>> точности вычисления связано с отсутствием четкого разграничения III и IV типов клонов. Таким образом, клоны IV типа распознаются неверно, что и является причиной падения точности.
+
+Из результатов тестирования инструмента, обученного на <<мутированных>> данных следует следующее:
+\begin{itemize}
+\setlength\itemsep{0mm}
+\item С увеличением размера проекта увеличивается время, затрачиваемое на анализ;
+\item Точность анализа не превышает 75\%;
+\item Точность анализа <<кучнее>> (по сравнению с результатами из табл.~\ref{testing}).
+\end{itemize}
+
+Увеличение времени объясняется теми же причинами, что и в предыдущем случае. Точность, в данном случае, напрямую зависит от обучающей выборке, которая содержит в себе множество неточностей и не обладает высоким качеством. <<Кучность>> обуславливается отсутствием размытых границ между клонами III и IV типов в данной выборке. В обучающем наборе клоны IV типа не рассматривались. Именно поэтому методы больше относящиеся к клонам IV типа, нежели к клонам III типа инструментом не определялись.
+
+При рассмотрении скорости работы предлагаемого метода, можно сделать вывод о ее вариативности. На текущий момент, скорость выполнения скорее низкая, нежели средняя. Однако, данный инструмент, на текущий момент, не был оптимизирован для достижения максимальной скорости работы. 
 
 \section{Итоги раздела}
 
-В данном разделе было проведено тестирование разработанного прототипа, реализующего предлагаемый метод интеллектуального поиска клонов. Проанализировав результаты тестирования, можно сделать вывод о целесообразности использования данного подхода. Однако, тестирование так же показало, что для полноценного использования разработанного прототипа необходимо произвести его оптимизацию.
+В данном разделе было проведено тестирование разработанного прототипа, реализующего предлагаемый метод интеллектуального поиска клонов. Проанализировав результаты тестирования, можно сделать вывод о целесообразности использования данного подхода. Однако, тестирование так же показало, что для полноценного использования разработанного прототипа необходимо произвести его оптимизацию. 
+
+
