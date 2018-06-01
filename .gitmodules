@@ -1,0 +1,3 @@
+[submodule "master_present"]
+	path = master_present
+	url = https://gitlab.com/ArsenyZorin/master_present
