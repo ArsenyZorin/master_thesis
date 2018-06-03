@@ -20,7 +20,7 @@
 
 # Типы клонов
 
-![clones](clones1.png)
+![clones](clones.png)
 
 # Техники обнаружения клонов
 
