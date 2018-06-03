@@ -62,3 +62,9 @@
 # Sequence-to-sequence
 
 ![seq2seq](seq2seq)
+
+# BigCloneBench
+
+- 25 тыс проектов на Java
+- 6.3 млн клоновых пар
+- 262.5 тыс не клоновых пар
