@@ -5,7 +5,7 @@
 image: tianon/latex
 
 stages:
-    build
+    - build
     
 thesis:
   stage: build
