@@ -54,3 +54,7 @@
 # Этапы
 
 ![stages](struct)
+
+# Выборка данных
+
+![mutator](mut_stages)
