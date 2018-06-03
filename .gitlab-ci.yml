@@ -8,12 +8,23 @@ stages:
     - build
     
 thesis:
-  stage: build
-  only:
-    - master
-  script:
-    - make clean pdf
-  artifacts:
-    name: thesis
-    paths:
-      - master_thesis.pdf
+    stage: build
+    only:
+        - master
+    script:
+        - make clean pdf
+    artifacts:
+        name: thesis
+        paths:
+            - master_thesis.pdf
+            
+slides:
+    stage: build
+    only:
+        - master
+    script:
+        - make
+    artifacts:
+        name: slides
+        paths:
+            - master_present/slides.pdf
