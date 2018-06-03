@@ -58,3 +58,7 @@
 # Выборка данных
 
 ![mutator](mut_stages)
+
+# Sequence-to-sequence
+
+![seq2seq](seq2seq)
