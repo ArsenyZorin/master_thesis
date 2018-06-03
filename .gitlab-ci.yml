@@ -2,11 +2,29 @@
 # use docker image with latex preinstalled
 # since there is no official latex image, use https://github.com/blang/latex-docker
 # possible alternative: https://github.com/natlownes/docker-latex
-image: blang/latex
+image: tianon/latex
 
-build:
-  script:
-    - make clean pdf
-  artifacts:
-    paths:
-      - "*.pdf"
+stages:
+    - build
+    
+thesis:
+    stage: build
+    only:
+        - master
+    script:
+        - make clean pdf
+    artifacts:
+        name: thesis
+        paths:
+            - master_thesis.pdf
+            
+slides:
+    stage: build
+    only:
+        - master
+    script:
+        - make
+    artifacts:
+        name: slides
+        paths:
+            - master_present/slides.pdf
