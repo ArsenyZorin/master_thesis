@@ -65,10 +65,6 @@
 
 ![mutator](mut_stages)
 
-# Sequence-to-sequence
-
-![seq2seq](seq2seq)
-
 # BigCloneBench
 
 - 25 тыс проектов на Java
